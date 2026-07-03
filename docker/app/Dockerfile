@@ -63,7 +63,7 @@ RUN mkdir -p /var/www/var/cache/dev
 RUN mkdir -p /var/www/var/log
 
 # Install Shoutrrr.
-ARG TARGETARCH
+ARG TARGETARCH=arm64
 ENV TARGETARCH=${TARGETARCH}
 ARG SHOUTRRR_VERSION="0.16.1"
 
