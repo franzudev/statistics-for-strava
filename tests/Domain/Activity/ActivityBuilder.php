@@ -29,7 +29,7 @@ final class ActivityBuilder
     private ImportSource $importSource = ImportSource::STRAVA_API;
     private ExternalReferenceId $externalReferenceId;
     private ActivityName $name;
-    private readonly string $description;
+    private string $description;
     private Kilometer $distance;
     private Meter $elevation;
     private ?Coordinate $startingCoordinate = null;
@@ -127,6 +127,13 @@ final class ActivityBuilder
     public function withName(string $name): self
     {
         $this->name = ActivityName::fromString($name);
+
+        return $this;
+    }
+
+    public function withDescription(string $description): self
+    {
+        $this->description = $description;
 
         return $this;
     }

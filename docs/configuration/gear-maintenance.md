@@ -13,7 +13,7 @@ Keep track of your gear and stay on top of maintenance tasks with our **Gear Mai
 
 * Every time a Strava activity is synced, the system checks if the activity involves any of your tracked gear.
 * It then calculates the usage of each attached component and updates the progress automatically.
-* If the Strava activity title contains one of the configured hashtags, the app will reset the maintenance task and counters from the next activity onwards and will start re-tracking from 0 again.
+* If the Strava activity title or description contains one of the configured hashtags, the app will reset the maintenance task and counters from the next activity onwards and will start re-tracking from 0 again.
 
 [Gear maintenance](https://www.youtube.com/embed/mYFmIFgUIYU ':include :type=iframe width=100% height=400px title="Dreeve" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen')
 
@@ -61,7 +61,7 @@ You should end up with the following directory structure:
 ```yml
 # Set to true to enable the gear maintenance feature
 enabled: false
-# Prefix for the hashtags used in the Strava activity title
+# Prefix for the hashtags used in the Strava activity title or description
 hashtagPrefix: 'sfs'
 # If set to "nextActivityOnwards", adding a maintenance hashtag to an activity title will reset the counters from the next activity onwards.
 # If set to "currentActivityOnwards", adding a maintenance hashtag to an activity title will reset the counters from the tagged activity onwards.
@@ -70,7 +70,7 @@ countersResetMode: nextActivityOnwards
 # Set to true to ignore retired gear
 ignoreRetiredGear: false
 components:
-  # Tag to be added to the Strava activity title.
+  # Tag to be added to the Strava activity title or description.
   # Will be combined with the hashtag-prefix and must be unique across all components.
   # Example: #sfs-chain
   - tag: 'chain'
@@ -90,7 +90,7 @@ components:
       currency: 'EUR'
     # A list of maintenance tasks for this component
     maintenance:
-      # Tag to be added to the Strava activity title.
+      # Tag to be added to the Strava activity title or description.
       # Will be combined with the hashtag-prefix and the component tag.
       # Must be unique across all tasks in the component.
       # Example: #sfs-chain-lubed
@@ -137,7 +137,7 @@ Each component represents a part of your gear that you want to track maintenance
         unit: km       
 ```
 
-Adding the tag `#sfs-chain-lubed` to your Strava activity title will reset the maintenance task and counters from the next activity onwards.
+Adding the tag `#sfs-chain-lubed` to your Strava activity title or description will reset the maintenance task and counters from the next activity onwards.
 
 > [!NOTE]
 > This tag also serves as the initial trigger to start maintenance tracking

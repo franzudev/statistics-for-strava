@@ -20,6 +20,7 @@ final readonly class GearMaintenanceConfig
     private function __construct(
         private bool $isFeatureEnabled,
         private bool $ignoreRetiredGear,
+        private string $hashtagPrefix,
     ) {
         $this->gearComponents = GearComponents::empty();
     }
@@ -34,12 +35,14 @@ final readonly class GearMaintenanceConfig
             return new self(
                 isFeatureEnabled: false,
                 ignoreRetiredGear: false,
+                hashtagPrefix: 'sfs',
             );
         }
 
         $gearMaintenanceConfig = new self(
             isFeatureEnabled: (bool) ($config['enabled'] ?? false),
             ignoreRetiredGear: (bool) ($config['ignoreRetiredGear'] ?? false),
+            hashtagPrefix: (string) ($config['hashtagPrefix'] ?? 'sfs'),
         );
 
         foreach ($config['components'] ?? [] as $component) {
@@ -85,6 +88,11 @@ final readonly class GearMaintenanceConfig
     public function ignoreRetiredGear(): bool
     {
         return $this->ignoreRetiredGear;
+    }
+
+    public function getHashtagPrefix(): string
+    {
+        return $this->hashtagPrefix;
     }
 
     public function getGearComponents(): GearComponents

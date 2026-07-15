@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Build\BuildGearMaintenanceHtml;
 
+use App\Domain\Activity\Activity;
+use App\Domain\Activity\ActivityRepository;
 use App\Domain\Gear\Gear;
 use App\Domain\Gear\GearId;
 use App\Domain\Gear\GearIds;
@@ -11,6 +13,8 @@ use App\Domain\Gear\GearRepository;
 use App\Domain\Gear\Gears;
 use App\Domain\Gear\Maintenance\GearComponent;
 use App\Domain\Gear\Maintenance\GearMaintenanceRepository;
+use App\Domain\Gear\Maintenance\Log\GearMaintenanceLog;
+use App\Domain\Gear\Maintenance\Log\GearMaintenanceLogRepository;
 use App\Domain\Gear\Maintenance\Task\Progress\MaintenanceTaskProgressCalculator;
 use App\Infrastructure\CQRS\Command\Command;
 use App\Infrastructure\CQRS\Command\CommandHandler;
@@ -23,6 +27,8 @@ final readonly class BuildGearMaintenanceHtmlCommandHandler implements CommandHa
     public function __construct(
         private GearMaintenanceRepository $gearMaintenanceRepository,
         private GearRepository $gearRepository,
+        private ActivityRepository $activityRepository,
+        private GearMaintenanceLogRepository $gearMaintenanceLogRepository,
         private MaintenanceTaskProgressCalculator $maintenanceTaskProgressCalculator,
         private Environment $twig,
         private FilesystemOperator $buildHtmlStorage,
@@ -45,6 +51,8 @@ final readonly class BuildGearMaintenanceHtmlCommandHandler implements CommandHa
 
             return;
         }
+
+        $this->syncMaintenanceLogsFromActivityTags();
 
         // Validate that all gear ids are in the DB.
         $gearIdsInDb = GearIds::fromArray($gears->map(fn (Gear $gear): GearId => $gear->getId()));
@@ -96,5 +104,71 @@ final readonly class BuildGearMaintenanceHtmlCommandHandler implements CommandHa
                 'gearIdsThatHaveDueTasks' => $this->maintenanceTaskProgressCalculator->getGearIdsThatHaveDueTasks(),
             ])
         );
+    }
+
+    private function syncMaintenanceLogsFromActivityTags(): void
+    {
+        $gearMaintenanceConfig = $this->gearMaintenanceRepository->find();
+        $existingLogKeys = [];
+
+        foreach ($this->gearMaintenanceLogRepository->findAll() as $gearMaintenanceLog) {
+            $existingLogKeys[$this->makeLogKey(
+                (string) $gearMaintenanceLog->getGearId(),
+                (string) $gearMaintenanceLog->getMaintenanceTaskId(),
+                (string) $gearMaintenanceLog->getPerformedOn(),
+            )] = true;
+        }
+
+        foreach ($this->activityRepository->findAll() as $activity) {
+            if (!($activityGearId = $activity->getGearId()) instanceof GearId) {
+                continue;
+            }
+
+            foreach ($gearMaintenanceConfig->getGearComponents() as $gearComponent) {
+                if (!$gearComponent->isAttachedTo($activityGearId)) {
+                    continue;
+                }
+
+                foreach ($gearComponent->getMaintenanceTasks() as $maintenanceTask) {
+                    $hashtag = '#'.implode('-', [
+                        $gearMaintenanceConfig->getHashtagPrefix(),
+                        $maintenanceTask->getId()->toUnprefixedString(),
+                    ]);
+
+                    if (!$this->activityContainsHashtag($activity, $hashtag)) {
+                        continue;
+                    }
+
+                    $logKey = $this->makeLogKey(
+                        (string) $activityGearId,
+                        (string) $maintenanceTask->getId(),
+                        (string) $activity->getStartDate(),
+                    );
+
+                    if (isset($existingLogKeys[$logKey])) {
+                        continue;
+                    }
+
+                    $this->gearMaintenanceLogRepository->add(GearMaintenanceLog::create(
+                        gearId: $activityGearId,
+                        maintenanceTaskId: $maintenanceTask->getId(),
+                        performedOn: $activity->getStartDate(),
+                    ));
+                    $existingLogKeys[$logKey] = true;
+                }
+            }
+        }
+    }
+
+    private function activityContainsHashtag(Activity $activity, string $hashtag): bool
+    {
+        $activityText = trim($activity->getOriginalName().' '.$activity->getDescription());
+
+        return 1 === preg_match('/(^|\s)'.preg_quote($hashtag, '/').'(?=$|\s|[^\p{L}\p{N}_-])/u', $activityText);
+    }
+
+    private function makeLogKey(string $gearId, string $maintenanceTaskId, string $performedOn): string
+    {
+        return implode('|', [$gearId, $maintenanceTaskId, $performedOn]);
     }
 }

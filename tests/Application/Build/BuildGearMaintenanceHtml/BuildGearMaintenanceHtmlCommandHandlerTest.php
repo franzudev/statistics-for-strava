@@ -118,6 +118,8 @@ class BuildGearMaintenanceHtmlCommandHandlerTest extends BuildAppFilesTestCase
         new BuildGearMaintenanceHtmlCommandHandler(
             gearMaintenanceRepository: $this->getContainer()->get(GearMaintenanceRepository::class),
             gearRepository: $this->getContainer()->get(GearRepository::class),
+            activityRepository: $this->getContainer()->get(ActivityRepository::class),
+            gearMaintenanceLogRepository: $this->getContainer()->get(GearMaintenanceLogRepository::class),
             maintenanceTaskProgressCalculator: $this->getContainer()->get(MaintenanceTaskProgressCalculator::class),
             twig: $this->getContainer()->get(Environment::class),
             buildHtmlStorage: $fileStorage,
@@ -126,5 +128,36 @@ class BuildGearMaintenanceHtmlCommandHandlerTest extends BuildAppFilesTestCase
             new BuildGearMaintenanceHtml()
         );
         $this->assertFileSystemWrites($fileStorage);
+    }
+
+    public function testHandlePersistsMaintenanceLogFromActivityDescriptionTag(): void
+    {
+        $this->importGearMaintenanceConfig();
+
+        $gear = GearBuilder::fromDefaults()
+            ->withGearId(GearId::fromUnprefixed('g10130856'))
+            ->build();
+        $this->getContainer()->get(GearRepository::class)->add($gear);
+
+        $this->getContainer()->get(ActivityRepository::class)->add(ActivityWithRawData::fromState(
+            ActivityBuilder::fromDefaults()
+                ->withActivityId(ActivityId::fromUnprefixed('description-tag'))
+                ->withName('Lunch Ride')
+                ->withDescription('Fresh chain wax #sfs-chain-lubed')
+                ->withGearId($gear->getId())
+                ->withStartDateTime(SerializableDateTime::fromString('2025-01-05 08:00:00'))
+                ->build(),
+            []
+        ));
+
+        $this->commandBus->dispatch(new BuildGearMaintenanceHtml());
+
+        $mostRecentMaintenance = $this->getContainer()
+            ->get(GearMaintenanceLogRepository::class)
+            ->findMostRecentForMaintenanceTask(MaintenanceTaskId::fromUnprefixed('chain-lubed'));
+
+        $this->assertInstanceOf(GearMaintenanceLog::class, $mostRecentMaintenance);
+        $this->assertEquals($gear->getId(), $mostRecentMaintenance->getGearId());
+        $this->assertSame('2025-01-05 08:00:00', (string) $mostRecentMaintenance->getPerformedOn());
     }
 }
