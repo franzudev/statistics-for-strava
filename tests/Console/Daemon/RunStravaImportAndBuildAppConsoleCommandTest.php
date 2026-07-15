@@ -10,6 +10,7 @@ use App\Domain\Activity\ActivityIdRepository;
 use App\Domain\Activity\ActivityRepository;
 use App\Domain\Activity\ActivityWithRawData;
 use App\Domain\Import\ImportMode;
+use App\Domain\Import\WatchDirectory;
 use App\Domain\Settings\SettingsRepository;
 use App\Domain\Strava\Strava;
 use App\Infrastructure\CQRS\Command\Bus\CommandBus;
@@ -173,6 +174,33 @@ class RunStravaImportAndBuildAppConsoleCommandTest extends ConsoleCommandTestCas
         $this->assertMatchesJsonSnapshot(Json::encode($this->commandBus->getDispatchedCommands()));
     }
 
+    public function testImportsGarminFilesDuringHybridImport(): void
+    {
+        $this->getContainer()->get('default.storage')->write('watch/ride.fit', 'raw-fit-bytes');
+
+        $command = $this->buildCommand(
+            commandBus: $this->commandBus,
+            importMode: ImportMode::HYBRID,
+        );
+
+        $application = new Application();
+        $application->addCommand($command);
+
+        $commandTester = new CommandTester($application->find('app:cron:run-strava-import'));
+        $commandTester->execute([
+            'command' => $command->getName(),
+            '--'.RunStravaImportAndBuildAppConsoleCommand::IMPORT_OPTION => true,
+        ]);
+
+        $commandClasses = array_map(
+            static fn (object $command): string => $command::class,
+            $this->commandBus->getDispatchedCommands(),
+        );
+
+        $this->assertContains(\App\Application\Import\FileImport\ImportActivityFiles\ImportActivityFiles::class, $commandClasses);
+        $this->assertContains(\App\Application\Import\CalculateActivityMetrics\CalculateActivityMetrics::class, $commandClasses);
+    }
+
     public function testReturnsEarlyInFileMode(): void
     {
         $command = $this->buildCommand(
@@ -264,6 +292,7 @@ class RunStravaImportAndBuildAppConsoleCommandTest extends ConsoleCommandTestCas
         parent::setUp();
 
         $this->keyValueStore = $this->getContainer()->get(KeyValueStore::class);
+        $this->getContainer()->get('default.storage')->deleteDirectory('watch');
 
         $this->getContainer()->get(ActivityRepository::class)->add(ActivityWithRawData::fromState(
             ActivityBuilder::fromDefaults()->build(),
@@ -296,6 +325,7 @@ class RunStravaImportAndBuildAppConsoleCommandTest extends ConsoleCommandTestCas
             ),
             appUrl: AppUrl::fromString('http://localhost'),
             importMode: $importMode,
+            watchDirectory: $this->getContainer()->get(WatchDirectory::class),
             keyValueStore: $this->keyValueStore,
             rebuildStatus: new RebuildStatus($this->keyValueStore),
             clock: PausedClock::fromString(self::TODAY),

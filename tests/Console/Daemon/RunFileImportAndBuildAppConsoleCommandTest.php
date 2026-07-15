@@ -219,6 +219,28 @@ class RunFileImportAndBuildAppConsoleCommandTest extends ConsoleCommandTestCase
         $this->assertSame(self::TODAY, (string) $this->keyValueStore->find(Key::APP_LAST_BUILT_ON));
     }
 
+    public function testRunsInHybridMode(): void
+    {
+        $this->getContainer()->get(ActivityRepository::class)->add(ActivityWithRawData::fromState(
+            ActivityBuilder::fromDefaults()->build(),
+            [],
+        ));
+        $this->watchStorage->write('watch/ride.fit', 'raw-fit-bytes');
+
+        $command = $this->buildCommand(new SpyCommandBus(), importMode: ImportMode::HYBRID);
+
+        $application = new Application();
+        $application->addCommand($command);
+
+        $commandTester = new CommandTester($application->find('app:cron:run-file-import'));
+        $commandTester->execute([
+            'command' => $command->getName(),
+            '--'.RunFileImportAndBuildAppConsoleCommand::IMPORT_OPTION => true,
+        ]);
+
+        $this->assertStringNotContainsString('Cannot import files.', $commandTester->getDisplay());
+    }
+
     public function testReturnsEarlyWhenImportModeIsStrava(): void
     {
         $command = $this->buildCommand(new SpyCommandBus(), importMode: ImportMode::STRAVA_API);

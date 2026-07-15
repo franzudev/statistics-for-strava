@@ -8,15 +8,21 @@ enum ImportMode: string
 {
     case STRAVA_API = 'stravaApi';
     case FILES = 'files';
+    case HYBRID = 'hybrid';
 
     public function isStravaApi(): bool
     {
-        return self::STRAVA_API === $this;
+        return in_array($this, [self::STRAVA_API, self::HYBRID], true);
     }
 
     public function isFiles(): bool
     {
-        return self::FILES === $this;
+        return in_array($this, [self::FILES, self::HYBRID], true);
+    }
+
+    public function isHybrid(): bool
+    {
+        return self::HYBRID === $this;
     }
 
     public static function fromServerVar(): self

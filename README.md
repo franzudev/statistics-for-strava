@@ -2,7 +2,7 @@
   <img src="public/assets/images/logo.svg" width="250" alt="Logo" >
 </p>
 
-<h1 align="center">Statistics for Strava</h1>
+<h1 align="center">Statistics for Strava — Garmin-compatible fork</h1>
 
 <p align="center">
 <a href="https://raw.githubusercontent.com/robiningelbrecht/statistics-for-strava/refs/heads/master/LICENSE"><img src="https://img.shields.io/github/license/robiningelbrecht/statistics-for-strava?color=428f7e&logo=open%20source%20initiative&logoColor=white" alt="License"></a>
@@ -18,11 +18,12 @@
 <p align="center">
   <a href="#-showcase">Showcase</a> •
   <a href="#-documentation">Docs</a> •
+  <a href="SUPPORT.md">Support</a> •
   <a href="https://discord.gg/p4zpZyCHNc">Discord</a>
 </p>
 
 <p align="center">
-  <a href="https://www.buymeacoffee.com/ingelbrecht" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;" ></a>
+  <a href="https://buymeacoffee.com/franzu" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;" ></a>
 </p>
 
 ## 📸 Showcase
@@ -34,6 +35,7 @@ https://github.com/user-attachments/assets/81554f32-31be-4899-afd6-681ce3e7bcb6
 
 ### Key Features
 
+* **Strava + Garmin-compatible import** – Keep the existing Strava API workflow and import Garmin FIT/TCX/GPX exports from the watch folder
 * **Dashboard** – See all your stats and charts at a glance
 * **Activities** -  Browse a detailed list of everything you've done
 * **Monthly View** - Monthly stats with an interactive calendar
@@ -52,6 +54,8 @@ https://github.com/user-attachments/assets/81554f32-31be-4899-afd6-681ce3e7bcb6
 * **PWA support** - Use it like a native app on your phone
 
 ## 📖 Documentation
+
+This public fork stays compatible with Statistics for Strava / Dreeve data and build flows while adding a Garmin-friendly fallback path for athletes who need to import exported activity files.
 
 Start off by showing some ❤️ and give this repo a star. 
 When you are done, head over to the [documentation](https://docs.getsfs.app) to get started with the installation and configuration of Statistics for Strava.

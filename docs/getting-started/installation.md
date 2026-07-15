@@ -95,6 +95,12 @@ STRAVA_REFRESH_TOKEN=YOUR_REFRESH_TOKEN_OBTAINED_AFTER_AUTH_FLOW
 # Valid timezones can found under TZ Identifier column here: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones#List
 TZ=Etc/GMT
 
+# Import mode:
+# - stravaApi: Strava API only (default, SFS-compatible)
+# - files: FIT/TCX/GPX watch-folder import only
+# - hybrid: Strava API plus Garmin-compatible FIT/TCX/GPX watch-folder import
+IMPORT_MODE=stravaApi
+
 # Uncomment and set these to run the container as a non-root user.
 # PUID=your host UID
 # PGID=your host GID
@@ -142,6 +148,8 @@ You should see this page—just follow the steps to complete the setup.
 
 Once you have successfully authenticated with Strava, you can import your data and build the html files,
 after which you can view your statistics.
+
+This fork also supports Garmin-compatible file imports. Export `.fit`, `.tcx`, or `.gpx` activities from Garmin Connect, copy them into `./storage/files/watch`, and set `IMPORT_MODE=files` for file-only mode or `IMPORT_MODE=hybrid` to keep Strava API sync while also processing Garmin exports.
 
 ```bash
 > docker compose exec app bin/console app:data:import

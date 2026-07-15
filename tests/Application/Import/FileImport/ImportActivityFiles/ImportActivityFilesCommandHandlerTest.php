@@ -110,6 +110,18 @@ class ImportActivityFilesCommandHandlerTest extends ContainerTestCase
         $this->assertMatchesSnapshot($output, new ConsoleOutputSnapshotDriver());
     }
 
+    public function testHandleRecordsGpxFailureWithGpxSource(): void
+    {
+        $this->dropInWatchFolder('broken.gpx', 'this is not valid xml');
+
+        $this->handler->handle(new ImportActivityFiles(new SpyOutput()));
+
+        $fileImports = $this->getFileImports();
+        $this->assertCount(1, $fileImports);
+        $this->assertSame(FileImportStatus::FAILED->value, $fileImports[0]['status']);
+        $this->assertSame(ImportSource::GPX_FILE->value, $fileImports[0]['source']);
+    }
+
     public function testHandleWithoutImportDirectoryIsNoOp(): void
     {
         $output = new SpyOutput();

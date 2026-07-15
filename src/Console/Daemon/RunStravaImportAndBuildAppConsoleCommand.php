@@ -9,6 +9,7 @@ use App\Application\AppStatusChecker;
 use App\Application\AppUrl;
 use App\Application\Build\RunBuild\RunBuild;
 use App\Application\Import\CalculateActivityMetrics\CalculateActivityMetrics;
+use App\Application\Import\FileImport\ImportActivityFiles\ImportActivityFiles;
 use App\Application\Import\StravaImport\DeleteActivitiesMarkedForDeletion\DeleteActivitiesMarkedForDeletion;
 use App\Application\Import\StravaImport\ImportActivities\ImportActivities;
 use App\Application\Import\StravaImport\ImportChallenges\ImportChallenges;
@@ -19,6 +20,7 @@ use App\Application\RebuildStatus;
 use App\Domain\Activity\ActivityId;
 use App\Domain\Activity\ActivityIds;
 use App\Domain\Import\ImportMode;
+use App\Domain\Import\WatchDirectory;
 use App\Domain\Integration\Notification\SendNotification\SendNotification;
 use App\Domain\Strava\RateLimit\StravaRateLimits;
 use App\Domain\Strava\Strava;
@@ -64,6 +66,7 @@ final class RunStravaImportAndBuildAppConsoleCommand extends Command
         private readonly AppStatusChecker $appStatusChecker,
         private readonly AppUrl $appUrl,
         private readonly ImportMode $importMode,
+        private readonly WatchDirectory $watchDirectory,
         private readonly KeyValueStore $keyValueStore,
         private readonly RebuildStatus $rebuildStatus,
         private readonly Clock $clock,
@@ -137,6 +140,12 @@ final class RunStravaImportAndBuildAppConsoleCommand extends Command
                 $this->commandBus->dispatch(new ProcessRawActivityData($output));
                 $this->commandBus->dispatch(new ImportSegments($output));
                 $this->commandBus->dispatch(new ImportChallenges($output));
+
+                if ($this->importMode->isHybrid() && $this->watchDirectory->hasFilesThatCanBeProcessed()) {
+                    $this->appStatusChecker->ensureIsReadyForFileImport();
+                    $this->commandBus->dispatch(new ImportActivityFiles($output));
+                }
+
                 $this->commandBus->dispatch(new CalculateActivityMetrics($output));
                 $this->commandBus->dispatch(new DeleteActivitiesMarkedForDeletion($output));
 

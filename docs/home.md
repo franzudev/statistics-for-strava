@@ -2,13 +2,14 @@
   <img width="250" src="https://github.com/dreeveapp/dreeve/raw/master/public/assets/images/logo.svg" alt="Logo">
 </p>
 
-<h4 class="text-center">Dreeve is a self-hosted, open-source dashboard for your sports and fitness data</h4>
+<h4 class="text-center">Dreeve is a self-hosted, open-source dashboard for your sports and fitness data, including Strava API sync and Garmin FIT/TCX/GPX file imports in this public fork.</h4>
 
 <div class="text-center">
 <a href="https://raw.githubusercontent.com/dreeveapp/dreeve/refs/heads/master/LICENSE"><img src="https://img.shields.io/github/license/dreeveapp/dreeve?color=428f7e&logo=open%20source%20initiative&logoColor=white" alt="License"></a>
 <a href="https://hub.docker.com/r/robiningelbrecht/dreeve"><img src="https://img.shields.io/docker/image-size/robiningelbrecht/dreeve?logo=docker&logoColor=white" alt="Docker Image Size"></a>
 <a href="https://hub.docker.com/r/robiningelbrecht/dreeve"><img src="https://img.shields.io/docker/v/robiningelbrecht/dreeve?sort=semver&logo=docker&logoColor=white" alt="Docker version"></a>
-<a href="https://discord.gg/p4zpZyCHNc"><img src="https://img.shields.io/badge/Dreeve?logo=discord&logoColor=%23ffffff&label=%20&labelColor=585858" alt="Discord server"></a>  
+<a href="https://discord.gg/p4zpZyCHNc"><img src="https://img.shields.io/badge/Dreeve?logo=discord&logoColor=%23ffffff&label=%20&labelColor=585858" alt="Discord server"></a>
+<a href="https://buymeacoffee.com/franzu"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-franzu-ffdd00?logo=buymeacoffee&logoColor=000000" alt="Buy Me a Coffee"></a>
 </div>
 
 ---
@@ -19,6 +20,7 @@
 
 ## Key Features
 
+* **Strava + Garmin-compatible import** – Keep Strava API sync and import Garmin FIT/TCX/GPX exports from the watch folder
 * **Dashboard** – See all your stats and charts at a glance
 * **Activities** -  Browse a detailed list of everything you've done
 * **Monthly View** - Monthly stats with an interactive calendar

@@ -12,6 +12,7 @@
   - [Main configuration](configuration/main-configuration.md "Dreeve | Main configuration")
   - [Dashboard widgets](configuration/dashboard-widgets.md "Dreeve | Dashboard widgets")
   - [Gear maintenance](configuration/gear-maintenance.md "Dreeve | Gear maintenance")
+  - [Garmin-compatible file import](configuration/garmin-file-import.md "Dreeve | Garmin-compatible file import")
   - [Strava webhooks](configuration/strava-webhooks.md "Dreeve | Strava webhooks")
   - [AI integration](configuration/ai-integration.md "Dreeve | AI integration")
   
