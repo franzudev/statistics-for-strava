@@ -12,6 +12,13 @@ parameters:
     env(STRAVA_CLIENT_ID): 'replace-me'
     env(STRAVA_CLIENT_SECRET): 'replace-me'
     env(STRAVA_REFRESH_TOKEN): 'replace-me'
+    env(GARMIN_CLIENT_ID): 'replace-me'
+    env(GARMIN_CLIENT_SECRET): 'replace-me'
+    env(GARMIN_OAUTH_AUTHORIZE_URL): 'https://connect.garmin.com/oauth2Confirm'
+    env(GARMIN_OAUTH_TOKEN_URL): 'https://connectapi.garmin.com/di-oauth2-service/oauth/token'
+    env(GARMIN_ACTIVITY_API_BASE_URI): 'https://apis.garmin.com/wellness-api/rest'
+    env(GARMIN_ACTIVITY_LIST_ENDPOINT): '/activities'
+    env(GARMIN_ACTIVITY_FILE_ENDPOINT_TEMPLATE): '/activities/{activityId}/file'
     env(DEMO_MODE_IS_ENABLED): 0
     env(LOCK_DSN): 'flock'
     env(TZ): ''
@@ -89,6 +96,35 @@ services:
 
     NeuronAI\Tools\Toolkits\ToolkitInterface:
         class: App\Domain\Integration\AI\Tool\Toolkit
+
+
+    App\Domain\Garmin\GarminClientId:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_CLIENT_ID)%']
+
+    App\Domain\Garmin\GarminClientSecret:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_CLIENT_SECRET)%']
+
+    App\Domain\Garmin\GarminOAuthAuthorizeUrl:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_OAUTH_AUTHORIZE_URL)%']
+
+    App\Domain\Garmin\GarminOAuthTokenUrl:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_OAUTH_TOKEN_URL)%']
+
+    App\Domain\Garmin\GarminActivityApiBaseUri:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_ACTIVITY_API_BASE_URI)%']
+
+    App\Domain\Garmin\GarminActivityListEndpoint:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_ACTIVITY_LIST_ENDPOINT)%']
+
+    App\Domain\Garmin\GarminActivityFileEndpointTemplate:
+        factory: [ null, 'fromString' ]
+        arguments: ['%env(string:GARMIN_ACTIVITY_FILE_ENDPOINT_TEMPLATE)%']
 
     App\Domain\Strava\StravaClientId:
         factory: [ null, 'fromString' ]

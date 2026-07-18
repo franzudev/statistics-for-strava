@@ -18,4 +18,7 @@ enum Key: string
     case SETTINGS_ZWIFT = 'settingsZwift';
     case SETTINGS_INTEGRATIONS = 'settingsIntegrations';
     case SETTINGS_DAEMON = 'settingsDaemon';
+    case GARMIN_OAUTH_STATE = 'garminOAuthState';
+    case GARMIN_TOKENS = 'garminTokens';
+    case GARMIN_LAST_SYNC_AT = 'garminLastSyncAt';
 }

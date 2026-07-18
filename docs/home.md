@@ -30,6 +30,7 @@
 * **Heatmap** - Visualize where you’ve been active the most
 * **Milestones** - A timeline view of your key achievements and milestones over time
 * **Strava Rewind** - A fun way to look back on your year in motion
+* **Garmin Connect import** - Import activities synced to Garmin Connect through Garmin's Activity API ([configuration](configuration/garmin-connect.md))
 * **Activity Photos** - Relive your moments with a photo archive
 * **User badges** - Shareable badges you can embed on your website, blog, or forum profiles
 * **PWA support** - Use it like a native app on your phone
