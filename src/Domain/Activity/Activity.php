@@ -285,6 +285,16 @@ final class Activity implements SupportsAITooling
         return $this->externalReferenceId;
     }
 
+    public function withImportSource(
+        ImportSource $importSource,
+        ?ExternalReferenceId $externalReferenceId,
+    ): self {
+        return clone ($this, [
+            'importSource' => $importSource,
+            'externalReferenceId' => $externalReferenceId,
+        ]);
+    }
+
     public function withSportType(SportType $sportType): self
     {
         return clone ($this, [

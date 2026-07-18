@@ -6,6 +6,7 @@ namespace App\Controller\Admin\Settings;
 
 use App\Application\AppUrl;
 use App\Domain\Athlete\HeartRateZone\HeartRateZoneConfiguration;
+use App\Domain\Garmin\Garmin;
 use App\Domain\Import\ImportMode;
 use App\Domain\Integration\AI\AIApiKey;
 use App\Domain\Settings\KeyValueBasedSettingsRepository;
@@ -41,6 +42,7 @@ final readonly class SettingsRequestHandler
         private StravaRefreshToken $stravaRefreshToken,
         private ImportMode $importMode,
         private UrlGeneratorInterface $urlGenerator,
+        private Garmin $garmin,
     ) {
     }
 
@@ -84,6 +86,8 @@ final readonly class SettingsRequestHandler
                 'stravaClientId' => $this->stravaClientId,
                 'stravaClientSecret' => $this->stravaClientSecret,
                 'stravaClientRefreshToken' => $this->stravaRefreshToken,
+                'garminConfigured' => $this->garmin->isConfigured(),
+                'garminAuthorized' => $this->garmin->isAuthorized(),
                 'AIApiKey' => AIApiKey::fromServerVar(),
                 'sportTypes' => $this->settingsRepository->appearance()->getSportTypesSortingOrder(),
                 'defaultHeartRateZones' => HeartRateZoneConfiguration::getDefaultZones(),

@@ -33,6 +33,24 @@
                 {{ "Strava API credentials."|trans({}, 'admin') }}
                 {{ "Configured via environment variables and cannot be changed here."|trans({}, 'admin') }}
             </p>
+            <div class="mb-6 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h4 class="font-semibold">{{ "Garmin import"|trans({}, 'admin') }}</h4>
+                        <p class="description mt-1">
+                            {{ "Connect Garmin to import activities synced to Garmin Connect automatically."|trans({}, 'admin') }}
+                        </p>
+                        {% if garminAuthorized %}
+                            <p class="mt-2 text-sm text-green-700">{{ "Garmin is connected."|trans({}, 'admin') }}</p>
+                        {% elseif not garminConfigured %}
+                            <p class="mt-2 text-sm text-yellow-700">{{ "Set GARMIN_CLIENT_ID and GARMIN_CLIENT_SECRET first."|trans({}, 'admin') }}</p>
+                        {% endif %}
+                    </div>
+                    <a href="{{ relativeUrl(path('garmin_oauth')) }}" class="btn--secondary inline-flex items-center justify-center gap-1.5">
+                        <span>{{ garminAuthorized ? "Reconnect Garmin"|trans({}, 'admin') : "Connect Garmin"|trans({}, 'admin') }}</span>
+                    </a>
+                </div>
+            </div>
             <div class="flex flex-col gap-4">
                 <div>
                     <label for="numberOfNewActivitiesToProcessPerImport">{{ "Number of new activities to process per import"|trans({}, 'admin') }}</label>
